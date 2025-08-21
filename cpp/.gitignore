@@ -85,7 +85,8 @@ out/
 
 # Gradle files
 .gradle/
-build/
+build/*
+!build/.gitkeep
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -360,7 +361,6 @@ tmtags
 **/nbproject/private/
 **/nbproject/Makefile-*.mk
 **/nbproject/Package-*.bash
-build/
 nbbuild/
 dist/
 nbdist/
@@ -441,7 +441,6 @@ fabric.properties
 
 ##### Eclipse
 .metadata
-bin/
 tmp/
 *.tmp
 *.bak
@@ -511,7 +510,6 @@ local.properties
 *.lai
 *.so
 *.so.*
-bin/*.dll
 *.dylib
 
 # Qt-es
@@ -920,8 +918,6 @@ FodyWeavers.xsd
 
 ##### Gradle
 .gradle
-**/build/
-!src/**/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting

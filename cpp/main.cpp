@@ -51,6 +51,7 @@ int main() {
     client.EnableSegmentData();
 
     thread logger(logWorker);
+    log("frameNumber\telapsedMilliseconds");
 
     int logEveryNFrames = 20;
     int frameCounter = 0;
@@ -69,7 +70,7 @@ int main() {
         auto duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
         if (++frameCounter % logEveryNFrames == 0) {
-            log("Tick at frame " + to_string(frameNumber) + ", took " + to_string(duration) + " ms");
+            log(to_string(frameNumber) + "\t" + to_string(duration));
         }
     }
 
