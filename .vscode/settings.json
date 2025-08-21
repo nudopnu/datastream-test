@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "string": "cpp"
     },
     "cmake.sourceDirectory": "C:/Users/Hochs/Documents/peter/xr-lab/nexus-bridge-comparison/cpp"
 }

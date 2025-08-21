@@ -17,6 +17,8 @@ client.EnableSegmentData()
 # Setup logging frequency
 logEveryNFrames = 20
 frameCounter = 0
+outputFrameCounter = 0
+maxOutputFrames = 100
 
 # Start a Thread to read strings for logging
 log_queue = queue.Queue()
@@ -30,7 +32,7 @@ def log_worker():
 threading.Thread(target=log_worker, daemon=True).start()
 log_queue.put("frameNumber\telapsedMilliseconds")
 
-while True:
+while outputFrameCounter < maxOutputFrames:
     # Start timer
     start = time.time()
 
@@ -47,3 +49,4 @@ while True:
     frameCounter += 1
     if (frameCounter % logEveryNFrames == 0):
         log_queue.put(f"{frameNumber}\t{elapsedMilliseconds:.2f}")
+        outputFrameCounter += 1

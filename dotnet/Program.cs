@@ -1,6 +1,6 @@
 using System.Diagnostics;
-using System.Threading.Channels;
 using ViconDataStreamSDK.DotNET;
+using System.Threading.Channels;
 
 var client = new Client();
 string host = "localhost:801";
@@ -18,6 +18,8 @@ client.EnableSegmentData();
 // Setup logging frequency
 int logEveryNFrames = 20;
 int frameCounter = 0;
+int outputFrameCounter = 0;
+int maxOutputFrames = 100;
 
 // Start a Thread to read strings for logging
 var logQueue = Channel.CreateUnbounded<string>();
@@ -30,7 +32,7 @@ _ = Task.Run(async () =>
 });
 logQueue.Writer.TryWrite("frameNumber\telapsedMilliseconds");
 
-while (true)
+while (outputFrameCounter < maxOutputFrames)
 {
   // Start timer
   var sw = Stopwatch.StartNew();
@@ -50,6 +52,7 @@ while (true)
   if (++frameCounter % logEveryNFrames == 0)
   {
     logQueue.Writer.TryWrite($"{frameNumber}\t{sw.ElapsedMilliseconds}");
+    outputFrameCounter++;
   }
 }
 
