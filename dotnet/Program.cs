@@ -28,6 +28,7 @@ _ = Task.Run(async () =>
     Console.WriteLine(message);
   }
 });
+logQueue.Writer.TryWrite("frameNumber\telapsedMilliseconds");
 
 while (true)
 {
@@ -48,7 +49,7 @@ while (true)
   // Send a log every nth frame
   if (++frameCounter % logEveryNFrames == 0)
   {
-    logQueue.Writer.TryWrite($"Tick at frame {frameNumber}, took {sw.ElapsedMilliseconds} ms");
+    logQueue.Writer.TryWrite($"{frameNumber}\t{sw.ElapsedMilliseconds}");
   }
 }
 

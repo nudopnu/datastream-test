@@ -27,8 +27,8 @@ def log_worker():
             break  # exit signal
         print(msg)
         log_queue.task_done()
-
 threading.Thread(target=log_worker, daemon=True).start()
+log_queue.put("frameNumber\telapsedMilliseconds")
 
 while True:
     # Start timer
@@ -42,8 +42,8 @@ while True:
     # On success get some data and stop timer
     frameNumber = client.GetFrameNumber()
     end = time.time()
-    elapsed = (end - start) * 1000
+    elapsedMilliseconds = (end - start) * 1000
 
     frameCounter += 1
     if (frameCounter % logEveryNFrames == 0):
-        log_queue.put(f"Tick at frame {frameNumber}, took {elapsed:.2f} ms")
+        log_queue.put(f"{frameNumber}\t{elapsedMilliseconds:.2f}")
