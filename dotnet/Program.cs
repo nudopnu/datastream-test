@@ -20,6 +20,10 @@ int logEveryNFrames = 20;
 int frameCounter = 0;
 int outputFrameCounter = 0;
 int maxOutputFrames = 100;
+if (args.Length > 0)
+{
+  maxOutputFrames = int.Parse(args[0]);
+}
 
 // Start a Thread to read strings for logging
 var logQueue = Channel.CreateUnbounded<string>();

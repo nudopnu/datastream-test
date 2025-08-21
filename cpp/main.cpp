@@ -40,7 +40,7 @@ void log(const string &msg)
     logCV.notify_one();
 }
 
-int main()
+int main(int argc, char** argv)
 {
     Client client;
     const string host = "localhost:801";
@@ -64,6 +64,9 @@ int main()
     int frameCounter = 0;
     int outputFrameCounter = 0;
     int maxOutputFrames = 100;
+    if (argc >= 2) {
+        maxOutputFrames = stoi(argv[1]);
+    }
 
     while (outputFrameCounter < maxOutputFrames)
     {

@@ -1,4 +1,4 @@
-import threading, time, queue
+import sys, threading, time, queue
 from vicon_dssdk.ViconDataStream import Client
 
 client = Client()
@@ -19,6 +19,8 @@ logEveryNFrames = 20
 frameCounter = 0
 outputFrameCounter = 0
 maxOutputFrames = 100
+if len(sys.argv) > 1:
+    maxOutputFrames = int(sys.argv[1])
 
 # Start a Thread to read strings for logging
 log_queue = queue.Queue()
@@ -32,7 +34,7 @@ def log_worker():
 threading.Thread(target=log_worker, daemon=True).start()
 log_queue.put("frameNumber\telapsedMilliseconds")
 
-while outputFrameCounter < maxOutputFrames:
+while outputFrameCounter <= maxOutputFrames:
     # Start timer
     start = time.time()
 

@@ -3,19 +3,19 @@ echo "Running C++ version..."
     cd cpp/build
     cmake ..
     cmake --build . --config Release
-    ./bin/Release/ViconClient.exe > ../../results/cpp.csv
+    ./bin/Release/ViconClient.exe 10 > ../../results/cpp.csv
 )
 
 echo "Running .NET version..."
 (
     cd dotnet
-    dotnet run > ../results/dotnet.csv
+    dotnet run 10 > ../results/dotnet.csv
 )
 
 echo "Running Python version..."
 (
     cd python
-    python main.py > ../results/python.csv
+    python main.py 10 > ../results/python.csv
 )
 
 awk '
