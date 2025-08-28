@@ -23,7 +23,6 @@ int main(int argc, char **argv)
     client.SetAxisMapping(Direction::Left, Direction::Up, Direction::Forward);
 
     // Enable necessary channels
-    client.EnableLightweightSegmentData();
     client.EnableSegmentData();
 
     // Test Setup

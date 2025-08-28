@@ -11,7 +11,6 @@ client.SetStreamMode(Client.StreamMode.EServerPush)
 client.SetAxisMapping(Client.AxisMapping.ELeft, Client.AxisMapping.EUp, Client.AxisMapping.EForward)
 
 # Enable necessary channels
-client.EnableLightweightSegmentData()
 client.EnableSegmentData()
 
 # Test Setup
@@ -23,7 +22,7 @@ if len(sys.argv) > 1:
 frames: list[tuple[int, int]] = []
 while frameCounter <= maxOutputFrames:
     # Start timer
-    start = time.time()
+    start = time.time_ns()
 
     # Should be blocking:
     result = client.GetFrame()
@@ -32,8 +31,8 @@ while frameCounter <= maxOutputFrames:
 
     # On success get some data and stop timer
     frameNumber = client.GetFrameNumber()
-    end = time.time()
-    elapsedMilliseconds = (end - start) * 1000
+    end = time.time_ns()
+    elapsedMilliseconds = (end - start) / 1_000_000
 
     frames.append((frameNumber, elapsedMilliseconds))
     frameCounter += 1
