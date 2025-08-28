@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using ViconDataStreamSDK.DotNET;
-using System.Threading.Channels;
 
 var client = new Client();
 string host = "localhost:801";
@@ -15,28 +14,16 @@ client.SetAxisMapping(Direction.Left, Direction.Up, Direction.Forward);
 client.EnableLightweightSegmentData();
 client.EnableSegmentData();
 
-// Setup logging frequency
-int logEveryNFrames = 20;
+// Test Setup
 int frameCounter = 0;
-int outputFrameCounter = 0;
 int maxOutputFrames = 100;
 if (args.Length > 0)
 {
   maxOutputFrames = int.Parse(args[0]);
 }
 
-// Start a Thread to read strings for logging
-var logQueue = Channel.CreateUnbounded<string>();
-_ = Task.Run(async () =>
-{
-  await foreach (var message in logQueue.Reader.ReadAllAsync())
-  {
-    Console.WriteLine(message);
-  }
-});
-logQueue.Writer.TryWrite("frameNumber\telapsedMilliseconds");
-
-while (outputFrameCounter < maxOutputFrames)
+List<(uint, long)> frames = [];
+while (frameCounter < maxOutputFrames)
 {
   // Start timer
   var sw = Stopwatch.StartNew();
@@ -51,12 +38,13 @@ while (outputFrameCounter < maxOutputFrames)
   // On success get some data and stop timer
   var frameNumber = client.GetFrameNumber().FrameNumber;
   sw.Stop();
+  var elapsedTime = sw.ElapsedMilliseconds;
 
-  // Send a log every nth frame
-  if (++frameCounter % logEveryNFrames == 0)
-  {
-    logQueue.Writer.TryWrite($"{frameNumber}\t{sw.ElapsedMilliseconds}");
-    outputFrameCounter++;
-  }
+  frames.Add((frameNumber, elapsedTime));
+  frameCounter += 1;
 }
 
+foreach (var (frameNumber, duration) in frames)
+{
+  Console.WriteLine($"{frameNumber}\t{duration}");
+}

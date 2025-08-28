@@ -1,46 +1,12 @@
 #include "DataStreamClient.h"
 #include <iostream>
 #include <chrono>
-#include <thread>
-#include <atomic>
-#include <queue>
-#include <mutex>
-#include <condition_variable>
+#include <utility>
 
 using namespace ViconDataStreamSDK::CPP;
 using namespace std;
 
-atomic<bool> running{true};
-queue<string> logQueue;
-mutex logMutex;
-condition_variable logCV;
-
-void logWorker()
-{
-    while (running)
-    {
-        unique_lock<mutex> lock(logMutex);
-        logCV.wait(lock, []
-                   { return !logQueue.empty() || !running; });
-
-        while (!logQueue.empty())
-        {
-            cout << logQueue.front() << endl;
-            logQueue.pop();
-        }
-    }
-}
-
-void log(const string &msg)
-{
-    {
-        lock_guard<mutex> lock(logMutex);
-        logQueue.push(msg);
-    }
-    logCV.notify_one();
-}
-
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     Client client;
     const string host = "localhost:801";
@@ -51,24 +17,25 @@ int main(int argc, char** argv)
         cerr << "Failed to connect to Vicon server.\n";
         return 1;
     }
-
     client.SetStreamMode(StreamMode::ServerPush);
+
+    // Set proper orientation
     client.SetAxisMapping(Direction::Left, Direction::Up, Direction::Forward);
+
+    // Enable necessary channels
     client.EnableLightweightSegmentData();
     client.EnableSegmentData();
 
-    thread logger(logWorker);
-    log("frameNumber\telapsedMilliseconds");
-
-    int logEveryNFrames = 20;
+    // Test Setup
     int frameCounter = 0;
-    int outputFrameCounter = 0;
     int maxOutputFrames = 100;
-    if (argc >= 2) {
+    if (argc >= 2)
+    {
         maxOutputFrames = stoi(argv[1]);
     }
 
-    while (outputFrameCounter < maxOutputFrames)
+    vector<pair<int, double>> frames;
+    while (frameCounter < maxOutputFrames)
     {
         auto start = chrono::steady_clock::now();
 
@@ -81,17 +48,16 @@ int main(int argc, char** argv)
         int frameNumber = frameInfo.FrameNumber;
 
         auto end = chrono::steady_clock::now();
-        auto duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+        auto elapsedMilliseconds = chrono::duration_cast<chrono::milliseconds>(end - start).count();
 
-        if (++frameCounter % logEveryNFrames == 0)
-        {
-            log(to_string(frameNumber) + "\t" + to_string(duration));
-            outputFrameCounter++;
-        }
+        frames.emplace_back(frameNumber, elapsedMilliseconds);
+        frameCounter++;
     }
 
-    running = false;
-    logCV.notify_all();
-    logger.join();
+    for (const auto &[frame, duration] : frames)
+    {
+        cout << frame << "\t" << duration << " ms" << endl;
+    }
+
     return 0;
 }

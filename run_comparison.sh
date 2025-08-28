@@ -9,7 +9,9 @@ echo "Running C++ version..."
 echo "Running .NET version..."
 (
     cd dotnet
-    dotnet run 10 > ../results/dotnet.csv
+    dotnet run 10 > ../results/dotne.csv
+    sed -r 's/\x1B\][0-9]+;[0-9]+;.*?\x1B\\//g' ../results/dotne.csv > ../results/dotnet.csv
+    rm ../results/dotne.csv
 )
 
 echo "Running Python version..."
